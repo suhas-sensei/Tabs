@@ -80,41 +80,47 @@ function App() {
         </button>
         <button
           style={{
-            backgroundColor: activeTab === 'SHOP' ? '#5a5a5a' : '#3a3a3a',
+            backgroundColor: activeTab === 'SHOP' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.1)',
             color: '#ffffff',
-            border: 'none',
+            border: '1px solid rgba(255, 255, 255, 0.18)',
+            borderRight: '1px solid rgba(255, 255, 255, 0.1)',
             padding: '12px 24px',
             fontSize: '14px',
             fontWeight: 600,
             letterSpacing: '0.5px',
             cursor: 'pointer',
-            transition: 'background-color 0.2s ease',
+            transition: 'all 0.3s ease',
             textTransform: 'uppercase',
-            borderRight: '1px solid #2a2a2a',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           }}
           onClick={() => setActiveTab('SHOP')}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4a4a4a'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeTab === 'SHOP' ? '#5a5a5a' : '#3a3a3a'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeTab === 'SHOP' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.1)'}
         >
           SHOP
         </button>
         <button
           style={{
-            backgroundColor: activeTab === 'SETTINGS' ? '#5a5a5a' : '#3a3a3a',
+            backgroundColor: activeTab === 'SETTINGS' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.1)',
             color: '#ffffff',
-            border: 'none',
+            border: '1px solid rgba(255, 255, 255, 0.18)',
+            borderRight: '1px solid rgba(255, 255, 255, 0.18)',
             padding: '12px 24px',
             fontSize: '14px',
             fontWeight: 600,
             letterSpacing: '0.5px',
             cursor: 'pointer',
-            transition: 'background-color 0.2s ease',
+            transition: 'all 0.3s ease',
             textTransform: 'uppercase',
-            borderRight: 'none',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           }}
           onClick={() => setActiveTab('SETTINGS')}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4a4a4a'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeTab === 'SETTINGS' ? '#5a5a5a' : '#3a3a3a'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeTab === 'SETTINGS' ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.1)'}
         >
           SETTINGS
         </button>
