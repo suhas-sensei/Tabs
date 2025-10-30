@@ -1,62 +1,87 @@
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei'
+import { Model } from '../models/Car1'
 
-function App() {
-  const [activeTab, setActiveTab] = useState('HOME')
+function Loader() {
+  return (
+    <mesh>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="orange" />
+    </mesh>
+  )
+}
+
+function Garage() {
+  const [activeTab, setActiveTab] = useState('GARAGE')
   const navigate = useNavigate()
-
-  const c1 = {
-    title: 'CAREER',
-    subtitle: 'BUILD YOUR OWN IDENTITY',
-    backgroundColor: 'rgba(220, 53, 69, 0.85)',
-    backgroundImage: '/c1.jpg',
-    flex: 1.2,
-  }
-
-  const c2 = {
-    title: 'QUICK MATCH',
-    subtitle: 'RUN THE RUN NOW!',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    backgroundImage: '/c2.jpg',
-    flex: 0.9,
-  }
-
-  const c3 = {
-    title: 'CHAMPIONSHIP',
-    subtitle: 'THE BATTLE OF LEGENDS BEGINS HERE',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    backgroundImage: '/c3.jpg',
-    flex: 1.1,
-  }
-
-  const c4 = {
-    title: 'EXPLORE THE WORLD',
-    subtitle: 'HEY! LETS MOVE ON',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    backgroundImage: '/c4.png',
-    flex: 0.8,
-  }
 
   return (
     <div style={{
       width: '100vw',
       height: '100vh',
       position: 'relative',
-      backgroundImage: 'url(/bg.jpg)',
+      backgroundImage: 'url(/garage.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     }}>
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
-        zIndex: 1,
-      }}></div>
+      <Canvas
+        shadows
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
+      >
+        <PerspectiveCamera makeDefault position={[-6, 2, 6]} fov={50} />
+        <OrbitControls
+          enableZoom={true}
+          enablePan={false}
+          enableRotate={true}
+          minDistance={3}
+          maxDistance={10}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 2.2}
+          enableDamping={true}
+          dampingFactor={0.05}
+          target={[-8, 0, 0]}
+        />
+          <ambientLight intensity={0.3} />
+          <directionalLight
+            position={[-5, 8, 0]}
+            intensity={1.5}
+            castShadow
+            shadow-mapSize-width={2048}
+            shadow-mapSize-height={2048}
+            shadow-camera-far={50}
+            shadow-camera-left={-10}
+            shadow-camera-right={10}
+            shadow-camera-top={10}
+            shadow-camera-bottom={-10}
+          />
+          <spotLight
+            position={[-5, 6, 2]}
+            angle={0.4}
+            penumbra={1}
+            intensity={1}
+            castShadow
+            target-position={[-5, -1, 0]}
+          />
+        <Suspense fallback={<Loader />}>
+          <Model scale={0.9} position={[-5, -1, 0]} rotation={[-0.25, - Math.PI /-0.79, -0.1]} />
+        </Suspense>
+        {/* Ground plane to receive shadows */}
+        <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[-5, -0.8, 0]}>
+          <planeGeometry args={[50, 50]} />
+          <shadowMaterial opacity={0.8} color="#000000" />
+        </mesh>
+        <Environment preset="warehouse" />
+      </Canvas>
       <nav style={{
         position: 'absolute',
         top: '50px',
@@ -65,6 +90,7 @@ function App() {
         gap: '3px',
         zIndex: 10,
         fontFamily: 'Arial, Helvetica, sans-serif',
+        pointerEvents: 'none',
       }}>
         <button
           style={{
@@ -82,8 +108,12 @@ function App() {
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            pointerEvents: 'auto',
           }}
-          onClick={() => setActiveTab('HOME')}
+          onClick={() => {
+            setActiveTab('HOME')
+            navigate('/')
+          }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'
             e.currentTarget.style.color = '#000000'
@@ -111,6 +141,7 @@ function App() {
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            pointerEvents: 'auto',
           }}
           onClick={() => {
             setActiveTab('GARAGE')
@@ -143,6 +174,7 @@ function App() {
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            pointerEvents: 'auto',
           }}
           onClick={() => setActiveTab('SHOP')}
           onMouseEnter={(e) => {
@@ -172,6 +204,7 @@ function App() {
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            pointerEvents: 'auto',
           }}
           onClick={() => setActiveTab('SETTINGS')}
           onMouseEnter={(e) => {
@@ -188,103 +221,6 @@ function App() {
       </nav>
       <div style={{
         position: 'absolute',
-        top: '130px',
-        left: '70px',
-        right: '70px',
-        display: 'flex',
-        gap: '20px',
-        zIndex: 10,
-      }}>
-        {[c1, c2, c3, c4].map((card, index) => (
-          <div key={index} style={{
-            flex: card.flex,
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'box-shadow 0.3s ease',
-            cursor: 'pointer',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.4)'
-            const img = e.currentTarget.querySelector('.card-image') as HTMLElement
-            const text = e.currentTarget.querySelector('.card-text') as HTMLElement
-            if (img) img.style.transform = 'scale(1.1)'
-            if (text) text.style.transform = 'scale(1.05)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)'
-            const img = e.currentTarget.querySelector('.card-image') as HTMLElement
-            const text = e.currentTarget.querySelector('.card-text') as HTMLElement
-            if (img) img.style.transform = 'scale(1)'
-            if (text) text.style.transform = 'scale(1)'
-          }}>
-            <div className="card-image" style={{
-              height: '450px',
-              backgroundImage: `url(${card.backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'transform 0.5s ease',
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
-                opacity: 0.15,
-                pointerEvents: 'none',
-              }}></div>
-            </div>
-            <div className="card-text" style={{
-              backgroundColor: card.backgroundColor,
-              padding: '20px 30px',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'transform 0.5s ease',
-              minHeight: '100px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
-                opacity: 0.15,
-                pointerEvents: 'none',
-              }}></div>
-              <h2 style={{
-                color: '#ffffff',
-                fontSize: '32px',
-                fontWeight: 700,
-                fontStyle: 'italic',
-                textTransform: 'uppercase',
-                margin: '0 0 5px 0',
-                position: 'relative',
-                zIndex: 1,
-              }}>{card.title}</h2>
-              <p style={{
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: 400,
-                fontStyle: 'italic',
-                textTransform: 'uppercase',
-                margin: 0,
-                position: 'relative',
-                zIndex: 1,
-              }}>{card.subtitle}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{
-        position: 'absolute',
         top: '50px',
         right: '70px',
         display: 'flex',
@@ -297,6 +233,7 @@ function App() {
         WebkitBackdropFilter: 'blur(10px)',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         fontFamily: 'Arial, Helvetica, sans-serif',
+        pointerEvents: 'auto',
       }}>
         <div style={{
           display: 'flex',
@@ -372,27 +309,8 @@ function App() {
           </div>
         </div>
       </div>
-      <div style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: '70px',
-        zIndex: 10,
-      }}>
-        <img src="/logo.png" alt="Logo" style={{
-          maxWidth: '150px',
-          height: 'auto',
-        }} />
-      </div>
-      <div style={{
-        position: 'relative',
-        zIndex: 5,
-        width: '100%',
-        height: '100%',
-      }}>
-        {/* Content will go here */}
-      </div>
     </div>
   )
 }
 
-export default App
+export default Garage
