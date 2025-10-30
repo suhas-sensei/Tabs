@@ -9,7 +9,7 @@ Title: Dacia 1300 Widebody LowPoly
 import * as THREE from 'three'
 import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
-import { GLTF } from 'three-stdlib'
+import { type GLTF } from 'three-stdlib'
 
 type GLTFResult = GLTF & {
   nodes: {

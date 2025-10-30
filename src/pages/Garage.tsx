@@ -407,6 +407,316 @@ function Garage() {
         </div>
       </div>
 
+      {/* Upgrade Grid - Left Side */}
+      <div style={{
+        position: 'absolute',
+        left: '200px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 10,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '20px',
+        fontFamily: 'Arial, Helvetica, sans-serif',
+      }}>
+        {/* Top Speed Category */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px',
+        }}>
+          <div style={{
+            background: 'linear-gradient(180deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%)',
+            padding: '10px 20px',
+            textAlign: 'center',
+            borderBottom: '3px solid #4a90e2',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '13px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '1.2px',
+            }}>
+              TOP SPEED
+            </span>
+          </div>
+          {/* Top Speed Items */}
+          {[0, 1].map((idx) => (
+            <div key={`speed-${idx}`} style={{
+              position: 'relative',
+              width: '150px',
+              height: '150px',
+              background: 'linear-gradient(135deg, rgba(45, 45, 55, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%)',
+              border: '3px solid rgba(74, 144, 226, 0.4)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(10px)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(74, 144, 226, 0.8)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(74, 144, 226, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(74, 144, 226, 0.4)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+            >
+              {/* Upgrade Arrow */}
+              {idx === 0 && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-10px',
+                  right: '-10px',
+                  width: '36px',
+                  height: '36px',
+                  background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '3px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 8px rgba(255, 87, 34, 0.5)',
+                }}>
+                  <span style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold' }}>↑</span>
+                </div>
+              )}
+              {/* Star Rating */}
+              <div style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '3px',
+                padding: '4px 8px',
+                background: 'rgba(0, 0, 0, 0.6)',
+                borderRadius: '12px',
+              }}>
+                <span style={{ color: '#f7bf08', fontSize: '18px', filter: 'drop-shadow(0 0 2px rgba(247, 191, 8, 0.5))' }}>★</span>
+              </div>
+              {/* Selection Arrow */}
+              {idx === 1 && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-16px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  color: '#4fc3f7',
+                  fontSize: '28px',
+                  filter: 'drop-shadow(0 2px 4px rgba(79, 195, 247, 0.6))',
+                }}>
+                  ▲
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Acceleration Category */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px',
+        }}>
+          <div style={{
+            background: 'linear-gradient(180deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%)',
+            padding: '10px 20px',
+            textAlign: 'center',
+            borderBottom: '3px solid #4a90e2',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '13px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '1.2px',
+            }}>
+              ACCELERATION
+            </span>
+          </div>
+          {/* Acceleration Items */}
+          {[0, 1].map((idx) => (
+            <div key={`accel-${idx}`} style={{
+              position: 'relative',
+              width: '150px',
+              height: '150px',
+              background: 'linear-gradient(135deg, rgba(45, 45, 55, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%)',
+              border: '3px solid rgba(74, 144, 226, 0.4)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(10px)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(74, 144, 226, 0.8)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(74, 144, 226, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(74, 144, 226, 0.4)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+            >
+              {/* Upgrade Arrow */}
+              {idx === 0 && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-10px',
+                  right: '-10px',
+                  width: '36px',
+                  height: '36px',
+                  background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '3px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 8px rgba(255, 87, 34, 0.5)',
+                }}>
+                  <span style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold' }}>↑</span>
+                </div>
+              )}
+              {/* Star Rating */}
+              <div style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '3px',
+                padding: '4px 8px',
+                background: 'rgba(0, 0, 0, 0.6)',
+                borderRadius: '12px',
+              }}>
+                <span style={{ color: '#f7bf08', fontSize: '18px', filter: 'drop-shadow(0 0 2px rgba(247, 191, 8, 0.5))' }}>★</span>
+              </div>
+              {/* Selection Arrow */}
+              {idx === 1 && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-16px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  color: '#4fc3f7',
+                  fontSize: '28px',
+                  filter: 'drop-shadow(0 2px 4px rgba(79, 195, 247, 0.6))',
+                }}>
+                  ▲
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Nitro Category */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px',
+        }}>
+          <div style={{
+            background: 'linear-gradient(180deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%)',
+            padding: '10px 20px',
+            textAlign: 'center',
+            borderBottom: '3px solid #4a90e2',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '13px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '1.2px',
+            }}>
+              NITRO
+            </span>
+          </div>
+          {/* Nitro Items */}
+          {[0, 1].map((idx) => (
+            <div key={`nitro-${idx}`} style={{
+              position: 'relative',
+              width: '150px',
+              height: '150px',
+              background: 'linear-gradient(135deg, rgba(45, 45, 55, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%)',
+              border: '3px solid rgba(74, 144, 226, 0.4)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(10px)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(74, 144, 226, 0.8)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(74, 144, 226, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(74, 144, 226, 0.4)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+            >
+              {/* Upgrade Arrow */}
+              {idx === 0 && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-10px',
+                  right: '-10px',
+                  width: '36px',
+                  height: '36px',
+                  background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '3px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 8px rgba(255, 87, 34, 0.5)',
+                }}>
+                  <span style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold' }}>↑</span>
+                </div>
+              )}
+              {/* Star Rating */}
+              <div style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '3px',
+                padding: '4px 8px',
+                background: 'rgba(0, 0, 0, 0.6)',
+                borderRadius: '12px',
+              }}>
+                <span style={{ color: '#f7bf08', fontSize: '18px', filter: 'drop-shadow(0 0 2px rgba(247, 191, 8, 0.5))' }}>★</span>
+              </div>
+              {/* Selection Arrow */}
+              {idx === 1 && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-16px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  color: '#4fc3f7',
+                  fontSize: '28px',
+                  filter: 'drop-shadow(0 2px 4px rgba(79, 195, 247, 0.6))',
+                }}>
+                  ▲
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Car Navigation Arrows */}
       <button
         onClick={handlePrevious}
@@ -476,26 +786,254 @@ function Garage() {
         ›
       </button>
 
-      {/* Car Counter */}
+      {/* Car Stats Display - Bottom Center */}
       <div style={{
         position: 'absolute',
-        bottom: '50px',
+        bottom: '70px',
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 10,
-        color: '#fff',
-        fontSize: '24px',
-        fontFamily: 'monospace',
-        fontWeight: 'bold',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        padding: '10px 30px',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        borderRadius: '30px',
-        border: '2px solid #fff',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '40px',
+        fontFamily: 'Arial, Helvetica, sans-serif',
       }}>
-        {currentCarIndex + 1} / {cars.length} - {cars[currentCarIndex].name}
+        {/* Top Speed */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+        }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            backgroundColor: 'rgba(70, 130, 180, 0.3)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid rgba(100, 160, 210, 0.5)',
+          }}>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '34px',
+              fontWeight: 'bold',
+              lineHeight: '1',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+              fontFamily: 'monospace',
+            }}>
+              1066
+            </span>
+            <span style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '13px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginTop: '2px',
+              textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
+            }}>
+              TOP SPEED
+            </span>
+          </div>
+        </div>
+
+        {/* Acceleration */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+        }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            backgroundColor: 'rgba(70, 130, 180, 0.3)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid rgba(100, 160, 210, 0.5)',
+          }}>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '34px',
+              fontWeight: 'bold',
+              lineHeight: '1',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+              fontFamily: 'monospace',
+            }}>
+              1000
+            </span>
+            <span style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '13px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginTop: '2px',
+              textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
+            }}>
+              ACCELERATION
+            </span>
+          </div>
+        </div>
+
+        {/* Handling */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+        }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            backgroundColor: 'rgba(70, 130, 180, 0.3)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid rgba(100, 160, 210, 0.5)',
+          }}>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <circle cx="12" cy="12" r="2"/>
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '34px',
+              fontWeight: 'bold',
+              lineHeight: '1',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+              fontFamily: 'monospace',
+            }}>
+              996
+            </span>
+            <span style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '13px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginTop: '2px',
+              textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
+            }}>
+              HANDLING
+            </span>
+          </div>
+        </div>
       </div>
+
+      {/* Car Info Display - Bottom Left */}
+      <div style={{
+        position: 'absolute',
+        bottom: '70px',
+        left: '70px',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '24px',
+        fontFamily: 'Arial, Helvetica, sans-serif',
+      }}>
+        <div style={{
+          width: '75px',
+          height: '75px',
+          borderRadius: '50%',
+          backgroundColor: '#f7bf08ff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="black">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+          </svg>
+        </div>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          <span style={{
+            color: '#ffffff',
+            fontSize: '33px',
+            fontWeight: 'bold',
+            lineHeight: '1.2',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+          }}>
+            {cars[currentCarIndex].name}
+          </span>
+          <div style={{
+            display: 'flex',
+            gap: '6px',
+            marginTop: '9px',
+          }}>
+            <span style={{ color: '#f7bf08ff', fontSize: '30px', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>★</span>
+            <span style={{ color: '#f7bf08ff', fontSize: '30px', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>★</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '30px', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>★</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '30px', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>★</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '30px', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>★</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Drive Button */}
+      <button
+        style={{
+          position: 'absolute',
+          bottom: '70px',
+          right: '70px',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          color: '#ffffff',
+          border: 'none',
+          padding: '18px 36px',
+          fontSize: '27px',
+          fontWeight: 600,
+          fontStyle: 'italic',
+          letterSpacing: '0.75px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          textTransform: 'uppercase',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          zIndex: 10,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'
+          e.currentTarget.style.color = '#000000'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+          e.currentTarget.style.color = '#ffffff'
+        }}
+        onClick={() => {
+          // Add drive functionality here
+          console.log('Drive clicked for car:', cars[currentCarIndex].name)
+        }}
+      >
+        SELECT
+      </button>
     </div>
   )
 }

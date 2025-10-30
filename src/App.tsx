@@ -196,14 +196,21 @@ function App() {
         zIndex: 10,
       }}>
         {[c1, c2, c3, c4].map((card, index) => (
-          <div key={index} style={{
-            flex: card.flex,
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'box-shadow 0.3s ease',
-            cursor: 'pointer',
-          }}
-          onMouseEnter={(e) => {
+          <div
+            key={index}
+            style={{
+              flex: card.flex,
+              display: 'flex',
+              flexDirection: 'column',
+              transition: 'box-shadow 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              if (card.title === 'CAREER') {
+                navigate('/career')
+              }
+            }}
+            onMouseEnter={(e) => {
             e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.4)'
             const img = e.currentTarget.querySelector('.card-image') as HTMLElement
             const text = e.currentTarget.querySelector('.card-text') as HTMLElement

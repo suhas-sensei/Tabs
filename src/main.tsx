@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import Garage from './pages/Garage.tsx'
+import Career from './pages/Career.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -11,6 +12,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/garage" element={<Garage />} />
+        <Route path="/career" element={<Career />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
