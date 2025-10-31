@@ -4,6 +4,8 @@ import { PerspectiveCamera, Environment } from '@react-three/drei'
 import { Model as MapModel } from '../models/Map'
 import { Model as Car1Model } from '../models/Car1'
 import * as THREE from 'three'
+import type { CarState } from '../carPhysics'
+import { updateCarPhysics, getGroundHeight } from '../carPhysics'
 
 function Loader() {
   return (
@@ -19,12 +21,13 @@ interface CarControllerProps {
   rotation: [number, number, number]
   scale: number
   onPositionChange?: (position: THREE.Vector3) => void
+  mapRef?: React.RefObject<THREE.Group | null>
 }
 
 // Camera follow component
 function CameraFollow({ target }: { target: React.RefObject<THREE.Group | null> }) {
   const { camera } = useThree()
-  const cameraOffset = useRef(new THREE.Vector3(0, 112, 300)) // Camera position in front of car (rotated 180 degrees)
+  const cameraOffset = useRef(new THREE.Vector3(0, 112, -300)) // Camera position behind car
   const targetPosition = useRef(new THREE.Vector3())
   const currentPosition = useRef(new THREE.Vector3())
   const lookAtPosition = useRef(new THREE.Vector3())
@@ -56,11 +59,17 @@ function CameraFollow({ target }: { target: React.RefObject<THREE.Group | null> 
   return null
 }
 
-function CarController({ position: initialPosition, rotation: initialRotation, scale, onPositionChange }: CarControllerProps) {
+function CarController({ position: initialPosition, rotation: initialRotation, scale, onPositionChange, mapRef }: CarControllerProps) {
   const carRef = useRef<THREE.Group>(null)
-  const [carPosition, setCarPosition] = useState<THREE.Vector3>(new THREE.Vector3(...initialPosition))
-  const [carRotation, setCarRotation] = useState<number>(initialRotation[1])
   const keysPressed = useRef<{ [key: string]: boolean }>({})
+
+  // Initialize car state with physics
+  const carState = useRef<CarState>({
+    velocity: new THREE.Vector3(0, 0, 0),
+    angularVelocity: 0,
+    position: new THREE.Vector3(...initialPosition),
+    rotation: initialRotation[1]
+  })
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -80,51 +89,40 @@ function CarController({ position: initialPosition, rotation: initialRotation, s
     }
   }, [])
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (!carRef.current) return
 
-    const speed = 200 * delta // Movement speed (increased for racing feel)
-    const rotationSpeed = 2 * delta // Rotation speed
-
-    let moved = false
-
-    // Rotation (A and D keys)
-    if (keysPressed.current['a']) {
-      setCarRotation((prev) => prev + rotationSpeed)
-      moved = true
-    }
-    if (keysPressed.current['d']) {
-      setCarRotation((prev) => prev - rotationSpeed)
-      moved = true
+    // Prepare controls for physics update
+    const controls = {
+      forward: keysPressed.current['w'] || false,
+      backward: keysPressed.current['s'] || false,
+      left: keysPressed.current['a'] || false,
+      right: keysPressed.current['d'] || false,
     }
 
-    // Forward/Backward movement (W and S keys)
-    if (keysPressed.current['w']) {
-      setCarPosition((prev) => {
-        const newPos = prev.clone()
-        newPos.x += Math.sin(carRotation) * speed
-        newPos.z += Math.cos(carRotation) * speed
-        return newPos
-      })
-      moved = true
-    }
-    if (keysPressed.current['s']) {
-      setCarPosition((prev) => {
-        const newPos = prev.clone()
-        newPos.x -= Math.sin(carRotation) * speed
-        newPos.z -= Math.cos(carRotation) * speed
-        return newPos
-      })
-      moved = true
+    // Update physics with delta multiplier for smooth movement
+    const deltaMultiplier = delta * 60 // Normalize to 60fps
+    carState.current = updateCarPhysics(carState.current, controls, deltaMultiplier)
+
+    // Update car Y position to follow terrain elevation
+    if (mapRef?.current) {
+      const groundHeight = getGroundHeight(
+        carState.current.position,
+        [mapRef.current]
+      )
+
+      if (groundHeight !== null) {
+        carState.current.position.y = groundHeight
+      }
     }
 
-    // Update car transform
-    carRef.current.position.copy(carPosition)
-    carRef.current.rotation.y = carRotation
+    // Apply updated state to car
+    carRef.current.position.copy(carState.current.position)
+    carRef.current.rotation.y = carState.current.rotation
 
     // Notify parent of position change
     if (onPositionChange) {
-      onPositionChange(carPosition)
+      onPositionChange(carState.current.position)
     }
   })
 
@@ -140,6 +138,7 @@ function CarController({ position: initialPosition, rotation: initialRotation, s
 
 function Career() {
   const [currentPosition, setCurrentPosition] = useState<THREE.Vector3>(new THREE.Vector3(31137.9, 10, -10333.3))
+  const mapRef = useRef<THREE.Group>(null)
 
   return (
     <div style={{
@@ -159,7 +158,7 @@ function Career() {
         }}
       >
         {/* Camera will be controlled by CameraFollow component */}
-        <PerspectiveCamera makeDefault position={[31137.9, 55, -10413.3]} fov={75} />
+        <PerspectiveCamera makeDefault position={[31137.9, 55, -10413.3]} fov={75} far={100000} />
 
         {/* Lighting */}
         <ambientLight intensity={0.6} />
@@ -179,15 +178,18 @@ function Career() {
 
         <Suspense fallback={<Loader />}>
           {/* Map at position (800, 0, 800) */}
-          <MapModel position={[800, 0, 800]} scale={1} />
+          <group ref={mapRef}>
+            <MapModel position={[800, 0, 800]} scale={1} />
+          </group>
 
           {/* White car (Car1 - 1962 Pontiac Catalina) with WASD controls */}
           <CarController
             key="car-31137-10-n10333"
             position={[31137.9, 20, -10333.3]}
             scale={60}
-            rotation={[0, - Math.PI/2, 0]}
+            rotation={[0, Math.PI/2, 0]}
             onPositionChange={setCurrentPosition}
+            mapRef={mapRef}
           />
         </Suspense>
 
