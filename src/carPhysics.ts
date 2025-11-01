@@ -27,6 +27,11 @@ export const CAR_PHYSICS = {
   // Speed-dependent steering (less steering at high speeds)
   minSteerFactor: 0.6, // At max speed
   maxSteerFactor: 1.0, // At zero speed
+
+  // Vertical (suspension) physics - NEW
+  verticalStiffness: 0.20, // How quickly car moves toward ground (spring strength)
+  verticalDamping: 0.60, // Reduces bouncing (shock absorber)
+  maxVerticalSpeed: 1.0, // Maximum vertical velocity (prevents extreme jumps)
 };
 
 export interface CarState {
@@ -34,6 +39,7 @@ export interface CarState {
   angularVelocity: number;
   position: Vector3;
   rotation: number;
+  verticalVelocity: number; // For smooth terrain following (now required)
 }
 
 /**
@@ -148,6 +154,7 @@ export function updateCarPhysics(
     angularVelocity: newAngularVelocity,
     position: newPosition,
     rotation: newRotation,
+    verticalVelocity: state.verticalVelocity, // Preserve vertical velocity
   };
 }
 
@@ -186,4 +193,68 @@ export function getGroundHeight(
   }
 
   return null;
+}
+
+/**
+ * Update vertical position with velocity-based physics for smooth terrain following
+ * Keeps car locked at base height (21.9) unless gradual elevation change detected (ramps/bridges)
+ *
+ * @param currentY - Current Y position of the car
+ * @param targetY - Target ground height from raycasting
+ * @param currentVerticalVelocity - Current vertical velocity
+ * @param deltaMultiplier - Delta time multiplier (normalized to 60fps)
+ * @returns Updated { y: number, verticalVelocity: number }
+ */
+export function updateVerticalPhysics(
+  currentY: number,
+  targetY: number,
+  currentVerticalVelocity: number,
+  deltaMultiplier: number = 1
+): { y: number; verticalVelocity: number } {
+  // Base road height - lock car to this height on flat roads
+  const BASE_HEIGHT = 21.9 + CAR_PHYSICS.carHeightOffset;
+  const HEIGHT_THRESHOLD = 3.0; // Minimum height difference to trigger elevation change
+
+  // Calculate the actual ground height (without car offset)
+  const groundY = targetY - CAR_PHYSICS.carHeightOffset;
+
+  // Calculate height difference
+  const heightDifference = targetY - currentY;
+  const absHeightDiff = Math.abs(heightDifference);
+
+  // Check if we're significantly above base road level (on a bridge/elevated road)
+  const isElevated = groundY > (21.9 + 5.0);
+
+  // Check if we're on a gradual elevation change (ramp, bridge approach, subway entrance)
+  const isGradualChange = absHeightDiff > HEIGHT_THRESHOLD;
+
+  if (isElevated || isGradualChange) {
+    // On elevated surface or gradual change - use smooth physics
+    let newVerticalVelocity = currentVerticalVelocity +
+      (heightDifference * CAR_PHYSICS.verticalStiffness * deltaMultiplier);
+
+    // Apply damping (reduces oscillation - like shock absorbers)
+    newVerticalVelocity *= CAR_PHYSICS.verticalDamping;
+
+    // Clamp vertical velocity to prevent extreme movements
+    if (newVerticalVelocity > CAR_PHYSICS.maxVerticalSpeed) {
+      newVerticalVelocity = CAR_PHYSICS.maxVerticalSpeed;
+    } else if (newVerticalVelocity < -CAR_PHYSICS.maxVerticalSpeed) {
+      newVerticalVelocity = -CAR_PHYSICS.maxVerticalSpeed;
+    }
+
+    // Update Y position based on velocity
+    const newY = currentY + newVerticalVelocity * deltaMultiplier;
+
+    return {
+      y: newY,
+      verticalVelocity: newVerticalVelocity,
+    };
+  } else {
+    // On regular flat road - lock to base height (21.9), no bobbing
+    return {
+      y: BASE_HEIGHT,
+      verticalVelocity: 0,
+    };
+  }
 }
