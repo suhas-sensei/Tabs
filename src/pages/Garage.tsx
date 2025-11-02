@@ -1,5 +1,5 @@
-import { useState, Suspense } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, Suspense, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei'
 import { EffectComposer, SSAO, ToneMapping } from '@react-three/postprocessing'
@@ -9,6 +9,8 @@ import { Model as Car3Model } from '../models/Car3'
 import { Model as Car4Model } from '../models/Car4'
 import { Model as Car5Model } from '../models/Car5'
 import { Model as Car6Model } from '../models/Car6'
+import type { CareerProgress } from '../types/career'
+import { loadCareerSaves } from '../utils/careerManager'
 
 function Loader() {
   return (
@@ -85,7 +87,64 @@ const cars = [
 function Garage() {
   const [activeTab, setActiveTab] = useState('GARAGE')
   const [currentCarIndex, setCurrentCarIndex] = useState(0)
+  const [totalCoins, setTotalCoins] = useState(0)
+  const [xpLevel, setXpLevel] = useState(0)
+  const [currentLevel, setCurrentLevel] = useState(0)
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Load player's total coins from localStorage
+  useEffect(() => {
+    console.log('[GARAGE DEBUG] useEffect triggered')
+    console.log('[GARAGE DEBUG] location.state:', location.state)
+
+    // Try to get player data from location state first
+    const locationPlayerData = (location.state as { playerData?: CareerProgress })?.playerData
+    console.log('[GARAGE DEBUG] locationPlayerData:', locationPlayerData)
+
+    // Load all saves
+    const saves = loadCareerSaves()
+    console.log('[GARAGE DEBUG] Loaded saves:', saves)
+
+    let player: CareerProgress | undefined
+
+    if (locationPlayerData && locationPlayerData.username) {
+      console.log('[GARAGE DEBUG] Looking for player by username:', locationPlayerData.username)
+      // Find player by username from location state
+      player = saves.players.find(
+        p => p.username.toLowerCase() === locationPlayerData.username.toLowerCase()
+      )
+      console.log('[GARAGE DEBUG] Found player by username:', player)
+
+      // Check if player just completed level 0 - show welcome message
+      if (player && player.completedLevels.includes(0) && player.currentLevel === 1) {
+        setShowWelcomeMessage(true)
+        // Hide message after 15 seconds
+        setTimeout(() => {
+          setShowWelcomeMessage(false)
+        }, 15000)
+      }
+    } else if (saves.players.length > 0) {
+      console.log('[GARAGE DEBUG] No location state, using most recent player')
+      // If no location state, use the most recently played player (highest timestamp)
+      player = saves.players.reduce((latest, current) =>
+        current.timestamp > latest.timestamp ? current : latest
+      )
+      console.log('[GARAGE DEBUG] Most recent player:', player)
+    }
+
+    if (player) {
+      console.log('[GARAGE DEBUG] Setting totalCoins to:', player.totalCoins)
+      setTotalCoins(player.totalCoins || 0)
+      // Calculate XP (10 coins = 1 XP)
+      setXpLevel(Math.floor((player.totalCoins || 0) / 10))
+      // Set current level (display as level + 1, so level 0 = "1", level 1 = "2", etc.)
+      setCurrentLevel(player.currentLevel + 1)
+    } else {
+      console.error('[GARAGE DEBUG] ERROR: No player found!')
+    }
+  }, [location.state])
 
   const currentCar = cars[currentCarIndex]
   const CurrentCarModel = currentCar.Model
@@ -356,7 +415,7 @@ function Garage() {
             fontWeight: 600,
             fontStyle: 'italic',
           }}>
-            12.67K
+            {totalCoins >= 1000 ? `${(totalCoins / 1000).toFixed(2)}K` : totalCoins}
           </span>
         </div>
         <div style={{
@@ -379,8 +438,17 @@ function Garage() {
             justifyContent: 'center',
             fontSize: '16px',
             fontWeight: 'bold',
+            color: '#ffffff',
           }}>
-            5
+            {currentLevel}
+          </div>
+          <div style={{
+            fontSize: '10px',
+            color: '#ffcc00',
+            fontWeight: 'bold',
+            marginLeft: '4px',
+          }}>
+            XP: {xpLevel}
           </div>
           <div style={{
             display: 'flex',
@@ -999,41 +1067,87 @@ function Garage() {
 
       {/* Drive Button */}
       <button
+        disabled={currentCarIndex !== 4}
         style={{
           position: 'absolute',
           bottom: '70px',
           right: '70px',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          color: '#ffffff',
+          backgroundColor: currentCarIndex === 4 ? 'rgba(0, 0, 0, 0.5)' : 'rgba(100, 100, 100, 0.3)',
+          color: currentCarIndex === 4 ? '#ffffff' : '#666666',
           border: 'none',
           padding: '18px 36px',
           fontSize: '27px',
           fontWeight: 600,
           fontStyle: 'italic',
           letterSpacing: '0.75px',
-          cursor: 'pointer',
+          cursor: currentCarIndex === 4 ? 'pointer' : 'not-allowed',
           transition: 'all 0.3s ease',
           textTransform: 'uppercase',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           zIndex: 10,
+          opacity: currentCarIndex === 4 ? 1 : 0.5,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'
-          e.currentTarget.style.color = '#000000'
+          if (currentCarIndex === 4) {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'
+            e.currentTarget.style.color = '#000000'
+          }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
-          e.currentTarget.style.color = '#ffffff'
+          if (currentCarIndex === 4) {
+            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+            e.currentTarget.style.color = '#ffffff'
+          }
         }}
         onClick={() => {
-          // Add drive functionality here
-          console.log('Drive clicked for car:', cars[currentCarIndex].name)
+          if (currentCarIndex === 4) {
+            // Car 5 (index 4) selected - navigate to career/1
+            console.log('Car 5 selected, navigating to career/1')
+
+            // Load player data from localStorage
+            const saves = loadCareerSaves()
+            if (saves.players.length > 0) {
+              const mostRecentPlayer = saves.players.reduce((latest, current) =>
+                current.timestamp > latest.timestamp ? current : latest
+              )
+              navigate('/career/1', { state: { playerData: mostRecentPlayer } })
+            }
+          }
         }}
       >
-        SELECT
+        {currentCarIndex === 4 ? 'SELECT' : 'LOCKED'}
       </button>
+
+      {/* Welcome message after completing career/0 */}
+      {showWelcomeMessage && (
+        <div style={{
+          position: 'absolute',
+          bottom: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 100,
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          padding: '25px 50px',
+          borderRadius: '12px',
+          border: '2px solid rgba(0, 200, 100, 0.8)',
+          boxShadow: '0 0 30px rgba(0, 200, 100, 0.5)',
+          maxWidth: '85%',
+          textAlign: 'center',
+        }}>
+          <p style={{
+            color: '#ffffff',
+            fontSize: '20px',
+            fontFamily: 'Arial, Helvetica, sans-serif',
+            margin: 0,
+            lineHeight: '1.6',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.8)',
+          }}>
+            Collect <span style={{ color: '#ffa500', fontWeight: 'bold' }}>coins</span> to unlock the next level. Each level unlocks <span style={{ color: '#00ff88', fontWeight: 'bold' }}>new cars</span> along with new modes like <span style={{ color: '#4fc3f7', fontWeight: 'bold' }}>blob</span>, <span style={{ color: '#4fc3f7', fontWeight: 'bold' }}>gmswap</span> all the way to <span style={{ color: '#ff4444', fontWeight: 'bold' }}>reclaiming your L2</span>. Start with this car and make your way up the <span style={{ color: '#ff00ff', fontWeight: 'bold' }}>blacklist</span>!
+          </p>
+        </div>
+      )}
     </div>
   )
 }

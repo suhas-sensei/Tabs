@@ -1,9 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { CareerModePopup } from './components/CareerModePopup'
+import type { CareerProgress } from './types/career'
+import { loadCareerSaves } from './utils/careerManager'
 
 function App() {
   const [activeTab, setActiveTab] = useState('HOME')
+  const [showCareerPopup, setShowCareerPopup] = useState(false)
+  const [totalCoins, setTotalCoins] = useState(0)
+  const [currentLevel, setCurrentLevel] = useState(0)
   const navigate = useNavigate()
+
+  // Load player stats from localStorage
+  useEffect(() => {
+    const saves = loadCareerSaves()
+    if (saves.players.length > 0) {
+      // Get most recent player
+      const mostRecentPlayer = saves.players.reduce((latest, current) =>
+        current.timestamp > latest.timestamp ? current : latest
+      )
+      setTotalCoins(mostRecentPlayer.totalCoins || 0)
+      // Set current level (career level 0-5, display as 1-6)
+      setCurrentLevel(mostRecentPlayer.currentLevel + 1)
+    }
+  }, [])
+
+  const handleCareerStart = (player: CareerProgress) => {
+    setShowCareerPopup(false)
+    // Navigate to career page with level number in URL
+    navigate(`/career/${player.currentLevel}`, { state: { playerData: player } })
+  }
 
   const c1 = {
     title: 'CAREER',
@@ -207,7 +233,7 @@ function App() {
             }}
             onClick={() => {
               if (card.title === 'CAREER') {
-                navigate('/career')
+                setShowCareerPopup(true)
               }
             }}
             onMouseEnter={(e) => {
@@ -329,7 +355,7 @@ function App() {
             fontWeight: 600,
             fontStyle: 'italic',
           }}>
-            12.67K
+            {totalCoins >= 1000 ? `${(totalCoins / 1000).toFixed(2)}K` : totalCoins}
           </span>
         </div>
         <div style={{
@@ -352,8 +378,9 @@ function App() {
             justifyContent: 'center',
             fontSize: '16px',
             fontWeight: 'bold',
+            color: '#ffffff',
           }}>
-            5
+            {currentLevel}
           </div>
           <div style={{
             display: 'flex',
@@ -398,6 +425,14 @@ function App() {
       }}>
         {/* Content will go here */}
       </div>
+
+      {/* Career Mode Popup */}
+      {showCareerPopup && (
+        <CareerModePopup
+          onStart={handleCareerStart}
+          onClose={() => setShowCareerPopup(false)}
+        />
+      )}
     </div>
   )
 }

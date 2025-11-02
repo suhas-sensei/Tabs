@@ -6,9 +6,9 @@ import type { Intersection } from 'three';
  * All cars (player and AI) use these same parameters
  */
 export const CAR_PHYSICS = {
-  // Movement
-  maxSpeed: 50,
-  acceleration: 0.65,
+  // Movement (reduced by 100x to match scaled down car/map)
+  maxSpeed: 0.5,
+  acceleration: 0.0065,
   deceleration: 0.96, // Applied when not accelerating
   brakeForce: 0.85,
 
@@ -22,7 +22,7 @@ export const CAR_PHYSICS = {
   forwardFriction: 0.97, // Rolling resistance
 
   // Physical properties
-  carHeightOffset: 2.26, // Adjusted for car scale
+  carHeightOffset: 0.0226, // Adjusted for car scale (scaled down 100x)
 
   // Speed-dependent steering (less steering at high speeds)
   minSteerFactor: 0.6, // At max speed
